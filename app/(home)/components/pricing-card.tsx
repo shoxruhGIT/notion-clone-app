@@ -1,5 +1,6 @@
 import { Button } from "@/components/ui/button";
 import { Check } from "lucide-react";
+import Link from "next/link";
 import React from "react";
 
 interface PricingCardProps {
@@ -30,7 +31,9 @@ export const PricingCard = ({
         <span className="text-gray-500 dark:text-gray-400">/month</span>
       </div>
 
-      <Button>Get Started</Button>
+      <Button>
+        <Link href="/documents">Get Started</Link>
+      </Button>
 
       <ul role="list" className="space-y-4 text-left mt-8">
         {options.split(", ").map((option) => (

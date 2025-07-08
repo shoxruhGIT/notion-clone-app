@@ -1,10 +1,35 @@
 import { cn } from "@/lib/utils";
-import { ChevronsLeft, MenuIcon } from "lucide-react";
+import {
+  ChevronsLeft,
+  MenuIcon,
+  Plus,
+  Rocket,
+  Search,
+  Settings,
+  Trash2,
+} from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
+import { DocumentList } from "./document-list";
+import { UserBox } from "./user-box";
+import { Item } from "./item";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { TrashBox } from "./trash-box";
+import { Progress } from "@/components/ui/progress";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 
 export const Sidebar = () => {
   const isMobile = useMediaQuery("(max-width: 770px)");
+
+  const createDocument = useMutation(api.document.createDocument);
+  const router = useRouter();
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const navbarRef = useRef<HTMLDivElement>(null);
@@ -80,6 +105,18 @@ export const Sidebar = () => {
     document.removeEventListener("mouseup", handleMouseUp);
   };
 
+  const onCreateDocument = () => {
+    const promise = createDocument({
+      title: "Untitled",
+    }).then((docId) => router.push(`/documents/${docId}`));
+
+    toast.promise(promise, {
+      loading: "Creating a new blank",
+      success: "Blank created successfully!",
+      error: "Failed to create blank",
+    });
+  };
+
   return (
     <>
       <div
@@ -98,10 +135,44 @@ export const Sidebar = () => {
           <ChevronsLeft className="h-6 w-6" />
         </div>
 
+        <div>
+          <UserBox />
+          <Item label="Search" icon={Search} />
+          <Item label="Settings" icon={Settings} />
+          <Item onClick={onCreateDocument} label="New document" icon={Plus} />
+        </div>
+
+        <div className="mt-4">
+          <DocumentList />
+          <Item onClick={onCreateDocument} label="Add a page" icon={Plus} />
+          <Popover>
+            <PopoverTrigger className="w-full mt-4">
+              <Item label="Trash" icon={Trash2} />
+            </PopoverTrigger>
+            <PopoverContent
+              className="p-0 w-72"
+              side={isMobile ? "bottom" : "right"}
+            >
+              <TrashBox />
+            </PopoverContent>
+          </Popover>
+        </div>
+
         <div
           className="absolute right-0 top-0 w-1 h-full cursor-ew-resize bg-primary/10 opacity-0 group-hover/sidebar:opacity-100 transition"
           onMouseDown={handleMouseDown}
         />
+
+        <div className="absolute bottom-0 px-2 bg-white/50 dark:bg-black/50 py-4 w-full">
+          <div className="flex justify-between items-center">
+            <div className="flex items-center gap-1 text-[13px]">
+              <Rocket />
+              <p className="opacity-70 font-bold"> Free plan</p>
+            </div>
+            <p className="text-[13px] opacity-70">1/3</p>
+          </div>
+          <Progress value={50} className="mt-2" />
+        </div>
       </div>
 
       <div
@@ -124,4 +195,3 @@ export const Sidebar = () => {
     </>
   );
 };
-
