@@ -8,7 +8,7 @@ import {
   Settings,
   Trash2,
 } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { DocumentList } from "./document-list";
 import { UserBox } from "./user-box";
@@ -40,15 +40,7 @@ export const Sidebar = () => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
 
-  useEffect(() => {
-    if (isMobile) {
-      collapse();
-    } else {
-      reset();
-    }
-  }, [isMobile]);
-
-  const collapse = () => {
+  const collapse = useCallback(() => {
     if (sidebarRef.current && navbarRef.current) {
       setIsCollapsed(true);
       setIsResetting(true);
@@ -58,9 +50,9 @@ export const Sidebar = () => {
       navbarRef.current.style.left = "0";
       setTimeout(() => setIsResetting(false), 300);
     }
-  };
+  }, []);
 
-  const reset = () => {
+  const reset = useCallback(() => {
     if (sidebarRef.current && navbarRef.current) {
       setIsCollapsed(false);
       setIsResetting(true);
@@ -71,7 +63,15 @@ export const Sidebar = () => {
 
       setTimeout(() => setIsResetting(false), 300);
     }
-  };
+  }, [isMobile]);
+
+  useEffect(() => {
+    if (isMobile) {
+      collapse();
+    } else {
+      reset();
+    }
+  }, [isMobile, collapse, reset]);
 
   const handleMouseDown = (
     event: React.MouseEvent<HTMLDivElement, MouseEvent>
@@ -117,8 +117,6 @@ export const Sidebar = () => {
       success: "Blank created successfully!",
       error: "Failed to create blank",
     });
-
-    
   };
 
   return (

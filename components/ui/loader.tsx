@@ -16,7 +16,9 @@ const loaderVariants = cva("text-muted-foreground animate-spin", {
   },
 });
 
-interface LoaderProps extends VariantProps<typeof loaderVariants> {}
+interface LoaderProps extends VariantProps<typeof loaderVariants> {
+  size?: "default" | "sm" | "lg" | "xl";
+}
 
 export const Loader = ({ size }: LoaderProps) => {
   return <Loader2 className={cn(loaderVariants({ size }))} />;
