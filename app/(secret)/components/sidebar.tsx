@@ -117,6 +117,8 @@ export const Sidebar = () => {
       success: "Blank created successfully!",
       error: "Failed to create blank",
     });
+
+    
   };
 
   return (

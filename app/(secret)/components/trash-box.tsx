@@ -12,6 +12,7 @@ import { toast } from "sonner";
 export const TrashBox = () => {
   const documents = useQuery(api.document.getTrashDocuments);
   const remove = useMutation(api.document.remove);
+  const restore = useMutation(api.document.restore);
 
   const router = useRouter();
   const params = useParams();
@@ -44,6 +45,16 @@ export const TrashBox = () => {
     }
   };
 
+  const onRestore = (documentId: Id<"documents">) => {
+    const promise = restore({ id: documentId });
+
+    toast.promise(promise, {
+      loading: "Restoring document...",
+      success: "Restored document!",
+      error: "Failed to restore document",
+    });
+  };
+
   return (
     <div className="text-sm">
       <div className="flex items-center gap-x-1 p-2">
@@ -73,6 +84,10 @@ export const TrashBox = () => {
               <div
                 className="rounded-sm p-2 hover:bg-neutral-200 dark:hover:bg-neutral-600 cursor-pointer"
                 role="button"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onRestore(document._id);
+                }}
               >
                 <Undo className="h-4 w-4 text-muted-foreground" />
               </div>

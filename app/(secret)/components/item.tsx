@@ -63,9 +63,15 @@ export const Item = ({
   ) => {
     event.stopPropagation();
     if (!id) return;
-    createDocument({
+    const promise = createDocument({
       title: "Untitled",
       parentDocument: id,
+    }).then((docId) => router.push(`/documents/${docId}`));
+
+    toast.promise(promise, {
+      loading: "Creating a new blank",
+      success: "Blank created successfully!",
+      error: "Failed to create blank",
     });
   };
 

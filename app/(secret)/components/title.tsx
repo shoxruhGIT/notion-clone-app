@@ -18,6 +18,8 @@ export const Title = ({ document }: TitleProps) => {
   const [title, setTitle] = useState(document.title || "Untitled");
   const [isEditing, setIsEditing] = useState(false);
 
+  
+
   const enableInput = () => {
     setTitle(document.title);
     setIsEditing(true);
