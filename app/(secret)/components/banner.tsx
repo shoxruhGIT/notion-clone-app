@@ -48,6 +48,7 @@ export const Banner = ({ documentId }: BannerProps) => {
         size={"sm"}
         variant={"outline"}
         onClick={onRestore}
+        asChild
       >
         Restore document
       </Button>
@@ -56,6 +57,7 @@ export const Banner = ({ documentId }: BannerProps) => {
           className="border-white bg-transparent hover:bg-primary/5 text-white hover:text-white p-1 px-2 h-auto font-normal cursor-pointer"
           size={"sm"}
           variant={"outline"}
+          asChild 
         >
           Delete forever
         </Button>

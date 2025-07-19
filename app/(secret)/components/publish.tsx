@@ -62,13 +62,24 @@ export const Publish = ({ document }: PublishProps) => {
 
   return (
     <Popover>
-      <PopoverTrigger>
-        <Button size={"sm"} variant={"ghost"} className="cursor-pointer">
+      <PopoverTrigger asChild>
+        <Button
+          size={"sm"}
+          variant={"ghost"}
+          className="cursor-pointer"
+          
+        >
           Share
           {document?.isPublished && <Globe className="w-4 h-4 text-sky-500" />}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-72" align="end" alignOffset={8} forceMount>
+      <PopoverContent
+        className="w-72"
+        align="end"
+        alignOffset={8}
+        forceMount
+        asChild
+      >
         {!document?.isPublished ? (
           <div className="flex flex-col items-center justify-center">
             <Globe className="h-8 w-8 text-muted-foreground mb-2" />
@@ -81,6 +92,7 @@ export const Publish = ({ document }: PublishProps) => {
               className="w-full text-sm cursor-pointer"
               onClick={onPublish}
               disabled={isLoading}
+              
             >
               Publish
             </Button>
@@ -104,6 +116,7 @@ export const Publish = ({ document }: PublishProps) => {
                 disabled={copied}
                 onClick={onCopy}
                 className="cursor-pointer h-8 rounded-l-none"
+                
               >
                 {copied ? (
                   <Check className="h-4 w-4" />
@@ -117,6 +130,7 @@ export const Publish = ({ document }: PublishProps) => {
               className="w-full text-sm cursor-pointer"
               onClick={onUnpublish}
               disabled={isLoading}
+              
             >
               Unpublish
             </Button>
