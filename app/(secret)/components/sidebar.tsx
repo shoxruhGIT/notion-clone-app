@@ -25,6 +25,8 @@ import { Progress } from "@/components/ui/progress";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "sonner";
 import { Navbar } from "./navbar";
+import { useSearch } from "@/hooks/use-search";
+import { useSetting } from "@/hooks/use-setting";
 
 export const Sidebar = () => {
   const isMobile = useMediaQuery("(max-width: 770px)");
@@ -32,6 +34,10 @@ export const Sidebar = () => {
   const createDocument = useMutation(api.document.createDocument);
   const router = useRouter();
   const params = useParams();
+
+  const { onOpen } = useSearch();
+
+  const setting = useSetting();
 
   const sidebarRef = useRef<HTMLDivElement>(null);
   const navbarRef = useRef<HTMLDivElement>(null);
@@ -139,8 +145,17 @@ export const Sidebar = () => {
 
         <div>
           <UserBox />
-          <Item label="Search" icon={Search} />
-          <Item label="Settings" icon={Settings} />
+          <Item
+            label="Search"
+            icon={Search}
+            isSearch
+            onClick={() => onOpen()}
+          />
+          <Item
+            label="Settings"
+            icon={Settings}
+            onClick={() => setting.onOpen()}
+          />
           <Item onClick={onCreateDocument} label="New document" icon={Plus} />
         </div>
 
