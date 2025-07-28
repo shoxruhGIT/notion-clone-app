@@ -154,6 +154,7 @@ export const Sidebar = () => {
           <Item
             label="Settings"
             icon={Settings}
+            isSettings
             onClick={() => setting.onOpen()}
           />
           <Item onClick={onCreateDocument} label="New document" icon={Plus} />
