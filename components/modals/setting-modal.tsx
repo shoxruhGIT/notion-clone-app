@@ -1,5 +1,5 @@
 import { useSetting } from "@/hooks/use-setting";
-import React, { useEffect } from "react";
+import React, { KeyboardEvent, useEffect } from "react";
 import { Dialog, DialogContent, DialogHeader } from "../ui/dialog";
 import { Label } from "../ui/label";
 import { ModeToggle } from "../shared/mode-toggle";
@@ -20,6 +20,7 @@ const SettingModal = () => {
     document.addEventListener("keydown", down);
     return () => document.removeEventListener("keydown", down);
   }, [onToggle]);
+
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>

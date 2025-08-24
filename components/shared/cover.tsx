@@ -6,6 +6,12 @@ import Image from "next/image";
 import { Button } from "../ui/button";
 import { ImageIcon, X } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { useParams } from "next/navigation";
+import { useCoverImage } from "@/hooks/use-cover-image";
+import { useEdgeStore } from "@/lib/edgestore";
+import { useMutation } from "convex/react";
+import { api } from "@/convex/_generated/api";
+import { Id } from "@/convex/_generated/dataModel";
 
 interface CoverProps {
   url?: string;
@@ -13,6 +19,23 @@ interface CoverProps {
 }
 
 const Cover = ({ url, preview }: CoverProps) => {
+  const params = useParams();
+  const coverImage = useCoverImage();
+  const { edgestore } = useEdgeStore();
+  const updateFields = useMutation(api.document.updateFields);
+
+  const onRemove = async () => {
+    if (url) {
+      await edgestore.publicFiles.delete({
+        url,
+      });
+    }
+    updateFields({
+      id: params.documentId as Id<"documents">,
+      coverImage: "",
+    });
+  };
+
   return (
     <div
       className={cn(
@@ -29,6 +52,7 @@ const Cover = ({ url, preview }: CoverProps) => {
             size={"sm"}
             variant={"outline"}
             className="text-muted-foreground text-xs cursor-pointer"
+            onClick={() => coverImage.onReplace(url)}
           >
             <ImageIcon />
             <span>Change cover</span>
@@ -38,6 +62,7 @@ const Cover = ({ url, preview }: CoverProps) => {
             size={"sm"}
             variant={"outline"}
             className="text-muted-foreground text-xs cursor-pointer"
+            onClick={onRemove}
           >
             <X />
             <span>Remove</span>

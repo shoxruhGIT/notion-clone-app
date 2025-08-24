@@ -130,7 +130,8 @@ export const Sidebar = () => {
       <div
         className={cn(
           "group/sidebar h-screen bg-secondary overflow-y-auto w-60 z-50 sticky left-0 top-0",
-          isResetting && "transition-all ease-in duration-300"
+          isResetting && "transition-all ease-in duration-300",
+          isMobile && "w-0"
         )}
         ref={sidebarRef}
       >
