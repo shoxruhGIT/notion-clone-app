@@ -15,14 +15,12 @@ const CoverImageModal = () => {
   const coverImage = useCoverImage();
   const { edgestore } = useEdgeStore();
 
-  const [file, setFile] = useState<File>();
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  const onClose = () => {
-    setFile(undefined);
+  const onClose = useCallback(() => {
     setIsSubmitting(false);
     coverImage.onClose();
-  };
+  }, [coverImage]);
 
   const uploadFn: UploadFn = useCallback(
     async ({ file }) => {
@@ -39,7 +37,7 @@ const CoverImageModal = () => {
       console.log(res);
       return { url: res.url };
     },
-    [edgestore, coverImage.url, params.documentId, updateFields]
+    [edgestore, coverImage.url, params.documentId, updateFields, onClose]
   );
 
   return (
