@@ -60,7 +60,7 @@ export const Sidebar = () => {
 
   const progress = Math.min((lng / 3) * 100, 100);
 
-  console.log(documents);
+  console.log(plan);
 
   const collapse = useCallback(() => {
     if (sidebarRef.current && navbarRef.current) {

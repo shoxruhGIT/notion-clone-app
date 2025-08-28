@@ -1,5 +1,6 @@
 import stripe from "@/lib/stripe";
 import { NextResponse } from "next/server";
+import Stripe from "stripe";
 
 export async function POST(req: Request) {
   try {
@@ -59,6 +60,10 @@ export async function POST(req: Request) {
   }
 }
 
+type SubscriptionWithPlan = Stripe.Subscription & {
+  plan: { product: Stripe.Product };
+};
+
 export async function GET(req: Request) {
   try {
     const { searchParams } = new URL(req.url);
@@ -68,14 +73,16 @@ export async function GET(req: Request) {
 
     if (!customer.data.length) return NextResponse.json("Free");
 
-    const subscriptions: any = await stripe.subscriptions.list({
+    const subscriptions= await stripe.subscriptions.list({
       customer: customer.data[0].id,
       expand: ["data.plan.product"],
     });
 
     if (!subscriptions.data.length) return NextResponse.json("Free");
 
-    return NextResponse.json(subscriptions.data[0].plan.product.name);
+    const productName = (subscriptions.data[0] as SubscriptionWithPlan).plan.product.name
+
+    return NextResponse.json(productName)
   } catch (error) {
     return NextResponse.json(
       `Something went wrong. Please try again - ${error}`,
