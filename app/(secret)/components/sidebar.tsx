@@ -13,7 +13,7 @@ import { useMediaQuery } from "usehooks-ts";
 import { DocumentList } from "./document-list";
 import { UserBox } from "./user-box";
 import { Item } from "./item";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { api } from "@/convex/_generated/api";
 import {
   Popover,
@@ -27,6 +27,9 @@ import { toast } from "sonner";
 import { Navbar } from "./navbar";
 import { useSearch } from "@/hooks/use-search";
 import { useSetting } from "@/hooks/use-setting";
+import { useUser } from "@clerk/clerk-react";
+import useSubscription from "@/hooks/use-subscriptions";
+import { Loader } from "@/components/ui/loader";
 
 export const Sidebar = () => {
   const isMobile = useMediaQuery("(max-width: 770px)");
@@ -34,6 +37,7 @@ export const Sidebar = () => {
   const createDocument = useMutation(api.document.createDocument);
   const router = useRouter();
   const params = useParams();
+  const { user } = useUser();
 
   const { onOpen } = useSearch();
 
@@ -45,6 +49,18 @@ export const Sidebar = () => {
 
   const [isCollapsed, setIsCollapsed] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
+
+  const email = user?.emailAddresses[0].emailAddress;
+
+  const { isLoading, plan } = useSubscription(email!);
+
+  const documents = useQuery(api.document.getAllDocuments);
+
+  const lng: number = documents?.length || 0;
+
+  const progress = Math.min((lng / 3) * 100, 100);
+
+  console.log(documents);
 
   const collapse = useCallback(() => {
     if (sidebarRef.current && navbarRef.current) {
@@ -114,6 +130,11 @@ export const Sidebar = () => {
   };
 
   const onCreateDocument = () => {
+    if (documents?.length && documents.length >= 3 && plan === "Free") {
+      toast.error("You can only create 3 documents in the free plan");
+      return;
+    }
+
     const promise = createDocument({
       title: "Untitled",
     }).then((docId) => router.push(`/documents/${docId}`));
@@ -183,14 +204,31 @@ export const Sidebar = () => {
         />
 
         <div className="absolute bottom-0 px-2 bg-white/50 dark:bg-black/50 py-4 w-full">
-          <div className="flex justify-between items-center">
-            <div className="flex items-center gap-1 text-[13px]">
-              <Rocket />
-              <p className="opacity-70 font-bold"> Free plan</p>
+          {isLoading ? (
+            <div className="w-full flex justify-center items-center">
+              <Loader />
             </div>
-            <p className="text-[13px] opacity-70">1/3</p>
-          </div>
-          <Progress value={50} className="mt-2" />
+          ) : (
+            <>
+              <div className="flex justify-between items-center">
+                <div className="flex items-center gap-1 text-[13px]">
+                  <Rocket />
+                  <p className="opacity-70 font-bold"> {plan} plan</p>
+                </div>
+
+                {plan === "Free" ? (
+                  <p className="text-[13px] opacity-70">
+                    {documents?.length}/3
+                  </p>
+                ) : (
+                  <p className="text-[13px] opacity-70">
+                    {documents?.length} notes
+                  </p>
+                )}
+              </div>
+              <Progress value={progress} className="mt-2" />
+            </>
+          )}
         </div>
       </div>
 

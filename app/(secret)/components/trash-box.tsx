@@ -3,6 +3,8 @@ import { Input } from "@/components/ui/input";
 import { Loader } from "@/components/ui/loader";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
+import useSubscription from "@/hooks/use-subscriptions";
+import { useUser } from "@clerk/clerk-react";
 import { useMutation, useQuery } from "convex/react";
 import { Search, Trash, Undo } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
@@ -13,11 +15,18 @@ export const TrashBox = () => {
   const documents = useQuery(api.document.getTrashDocuments);
   const remove = useMutation(api.document.remove);
   const restore = useMutation(api.document.restore);
+  const { user } = useUser();
 
   const router = useRouter();
   const params = useParams();
 
   const [search, setSearch] = useState("");
+
+  const allDocuments = useQuery(api.document.getAllDocuments);
+
+  const email = user?.emailAddresses[0].emailAddress;
+
+  const { plan } = useSubscription(email!);
 
   if (documents === undefined) {
     return (
@@ -46,6 +55,13 @@ export const TrashBox = () => {
   };
 
   const onRestore = (documentId: Id<"documents">) => {
+    if (allDocuments?.length && allDocuments?.length >= 3 && plan === "Free") {
+      toast.error(
+        "You already have 3 notes. Please delete one to restore this note"
+      );
+      return
+    }
+
     const promise = restore({ id: documentId });
 
     toast.promise(promise, {

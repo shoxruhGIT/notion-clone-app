@@ -45,7 +45,7 @@ export const Menu = ({ documentId }: MenuProps) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger onClick={(e) => e.stopPropagation()} asChild>
-        <Button size={"sm"} variant={"ghost"} className="cursor-pointer" asChild>
+        <Button size={"sm"} variant={"ghost"} className="cursor-pointer">
           <MoreHorizontal className="h-4 w-4 text-muted-foreground" />
         </Button>
       </DropdownMenuTrigger>

@@ -2,8 +2,9 @@
 
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
+import useSubscription from "@/hooks/use-subscriptions";
 import { useUser } from "@clerk/clerk-react";
-import { useMutation } from "convex/react";
+import { useMutation, useQuery } from "convex/react";
 import { Plus } from "lucide-react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -15,7 +16,18 @@ const DocumentPage = () => {
   const createDocument = useMutation(api.document.createDocument);
   const router = useRouter();
 
+  const email = user?.emailAddresses[0].emailAddress;
+
+  const { plan } = useSubscription(email!);
+
+  const documents = useQuery(api.document.getAllDocuments);
+
   const onCreateDocument = () => {
+    if (documents?.length && documents.length >= 3 && plan === "Free") {
+      toast.error("You can only create 3 documents in the free plan");
+      return;
+    }
+
     const promise = createDocument({
       title: "Untitled",
     }).then((docId) => router.push(`/documents/${docId}`));

@@ -2,7 +2,9 @@ import ConfirmModal from "@/components/modals/confirm-modal";
 import { Button } from "@/components/ui/button";
 import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
-import { useMutation } from "convex/react";
+import useSubscription from "@/hooks/use-subscriptions";
+import { useUser } from "@clerk/clerk-react";
+import { useMutation, useQuery } from "convex/react";
 import { useRouter } from "next/navigation";
 import React from "react";
 import { toast } from "sonner";
@@ -13,9 +15,16 @@ interface BannerProps {
 
 export const Banner = ({ documentId }: BannerProps) => {
   const router = useRouter();
+  const {user} = useUser()
 
   const remove = useMutation(api.document.remove);
   const restore = useMutation(api.document.restore);
+
+  const allDocuments = useQuery(api.document.getAllDocuments);
+
+  const email = user?.emailAddresses[0].emailAddress;
+
+  const { plan } = useSubscription(email!);
 
   const onRemove = () => {
     const promise = remove({ id: documentId });
@@ -30,6 +39,12 @@ export const Banner = ({ documentId }: BannerProps) => {
   };
 
   const onRestore = () => {
+    if (allDocuments?.length && allDocuments?.length >= 3 && plan === "Free") {
+      toast.error(
+        "You already have 3 notes. Please delete one to restore this note"
+      );
+      return;
+    }
     const promise = restore({ id: documentId });
 
     toast.promise(promise, {

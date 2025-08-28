@@ -49,7 +49,7 @@ const Toolbar = ({ document, preview }: ToolbarProps) => {
     setValue(value);
     updateFields({
       id: document._id,
-      title: value,
+      title: value || "New Page",
     });
   };
 
@@ -87,8 +87,8 @@ const Toolbar = ({ document, preview }: ToolbarProps) => {
         <p className="text-6xl pt-6">{document.icon}</p>
       )}
 
-      <div className="opacity-0 group-hover:opacity-100 flex flex-col py-4">
-        <div className="">
+      <div className=" flex flex-col py-4">
+        <div className="opacity-0 group-hover:opacity-100">
           {!document.icon && !preview && (
             <IconPicker asChild onChange={onEmojiChange}>
               <Button
