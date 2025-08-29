@@ -5,7 +5,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 
-const Error = () => {
+const NotFound = () => {
   return (
     <div className="h-full flex flex-col items-center justify-center space-y-4">
       <Image
@@ -30,4 +30,4 @@ const Error = () => {
   );
 };
 
-export default Error;
+export default NotFound;
