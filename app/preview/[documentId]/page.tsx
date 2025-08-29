@@ -7,17 +7,19 @@ import { api } from "@/convex/_generated/api";
 import { Id } from "@/convex/_generated/dataModel";
 import { useQuery } from "convex/react";
 import dynamic from "next/dynamic";
-import React, { useMemo } from "react";
+import React, { use, useMemo } from "react";
 
-interface DocumentIdPageProps {
-  params: {
-    documentId: string
-  };
+interface DocumentPageIdProps {
+  params: Promise<{
+    documentId: string;
+  }>;
 }
 
-const Page = ({ params }: DocumentIdPageProps) => {
+const Page = ({ params }: DocumentPageIdProps) => {
+  const { documentId } = use(params);
+
   const document = useQuery(api.document.getDocumentById, {
-    id: params.documentId as Id<"documents">,
+    id: documentId as Id<"documents">,
   });
 
   const Editor = useMemo(
