@@ -11,7 +11,7 @@ import React, { useMemo } from "react";
 
 interface DocumentIdPageProps {
   params: {
-    documentId: string;
+    documentId: Id<"documents">
   };
 }
 
