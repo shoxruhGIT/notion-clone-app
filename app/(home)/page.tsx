@@ -1,3 +1,5 @@
+"use client"
+
 import { Clients, Footer, Heroes, Pricing } from "./components";
 
 export default function Home() {
